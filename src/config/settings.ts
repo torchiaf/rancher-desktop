@@ -75,6 +75,7 @@ export const defaultSettings = {
     showMuted:   false,
     mutedChecks: {} as Record<string, boolean>,
   },
+  preferences: { currentNavItem: 'Application' },
 };
 
 export type Settings = typeof defaultSettings;

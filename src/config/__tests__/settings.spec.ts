@@ -43,6 +43,7 @@ describe('updateFromCommandLine', () => {
         showMuted:   false,
         mutedChecks: { },
       },
+      preferences: { currentNavItem: 'Application' },
     };
     origPrefs = clone(prefs);
   });

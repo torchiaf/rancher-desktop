@@ -20,7 +20,7 @@ test.describe.serial('Main App Test', () => {
   let preferencesWindow: Page;
 
   test.beforeAll(async() => {
-    createDefaultSettings();
+    createDefaultSettings({ preferences: { currentNavItem: 'Application' } });
 
     electronApp = await _electron.launch({
       args: [
@@ -114,6 +114,22 @@ test.describe.serial('Main App Test', () => {
     await kubernetes.nav.click();
 
     await expect(containerEngine.nav).toHaveClass('preferences-nav-item');
+    await expect(kubernetes.nav).toHaveClass('preferences-nav-item active');
+    await expect(kubernetes.kubernetesToggle).toBeVisible();
+    await expect(kubernetes.kubernetesVersion).toBeVisible();
+    await expect(kubernetes.kubernetesPort).toBeVisible();
+    await expect(kubernetes.traefikToggle).toBeVisible();
+  });
+
+  test('should show kubernetes after close and reopen references modal', async() => {
+    preferencesWindow.close();
+
+    await new NavPage(page).preferencesButton.click();
+    preferencesWindow = await electronApp.waitForEvent('window', page => /preferences/i.test(page.url()));
+
+    expect(preferencesWindow).toBeDefined();
+    const { kubernetes } = new PreferencesPage(preferencesWindow);
+
     await expect(kubernetes.nav).toHaveClass('preferences-nav-item active');
     await expect(kubernetes.kubernetesToggle).toBeVisible();
     await expect(kubernetes.kubernetesVersion).toBeVisible();

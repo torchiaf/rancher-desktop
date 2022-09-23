@@ -11,6 +11,7 @@ import PreferencesBody from '@/components/Preferences/ModalBody.vue';
 import PreferencesHeader from '@/components/Preferences/ModalHeader.vue';
 import PreferencesNav from '@/components/Preferences/ModalNav.vue';
 import type { ServerState } from '@/main/commandServer/httpCommandServer';
+import { Settings, load } from '~/config/settings';
 
 export default Vue.extend({
   name:       'preferences-modal',
@@ -19,8 +20,10 @@ export default Vue.extend({
   },
   layout: 'preferences',
   data() {
+    const settings: Settings = load();
+
     return {
-      currentNavItem:    'Application',
+      currentNavItem:    settings.preferences.currentNavItem,
       preferencesLoaded: false,
     };
   },
@@ -58,6 +61,8 @@ export default Vue.extend({
   methods:  {
     navChanged(tabName: string) {
       this.currentNavItem = tabName;
+      ipcRenderer.invoke('settings-write',
+        { preferences: { currentNavItem: this.currentNavItem } } );
     },
     closePreferences() {
       ipcRenderer.send('preferences-close');

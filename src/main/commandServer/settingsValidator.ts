@@ -78,6 +78,7 @@ export default class SettingsValidator {
         mutedChecks: this.checkBooleanMapping,
         showMuted:   this.checkBoolean,
       },
+      preferences: { currentNavItem: this.checkString },
     };
     this.canonicalizeSynonyms(newSettings);
     const errors: Array<string> = [];
