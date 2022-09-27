@@ -333,6 +333,10 @@ Electron.app.on('before-quit', async(event) => {
     if (process.env['APPIMAGE']) {
       await integrationManager.removeSymlinksOnly();
     }
+
+    // Preferences dialog should show Application page after each restart.
+    writeSettings({ preferences: { currentNavItem: 'Application' } });
+
     Electron.app.quit();
   }
 });
