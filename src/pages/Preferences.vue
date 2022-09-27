@@ -10,8 +10,9 @@ import PreferencesActions from '@/components/Preferences/ModalActions.vue';
 import PreferencesBody from '@/components/Preferences/ModalBody.vue';
 import PreferencesHeader from '@/components/Preferences/ModalHeader.vue';
 import PreferencesNav from '@/components/Preferences/ModalNav.vue';
+import { Settings } from '@/config/settings';
 import type { ServerState } from '@/main/commandServer/httpCommandServer';
-import { Settings, load } from '~/config/settings';
+import { RecursivePartial } from '@/utils/typeUtils';
 
 export default Vue.extend({
   name:       'preferences-modal',
@@ -20,10 +21,8 @@ export default Vue.extend({
   },
   layout: 'preferences',
   data() {
-    const settings: Settings = load();
-
     return {
-      currentNavItem:    settings.preferences.currentNavItem,
+      currentNavItem:    this.$store.getters['preferences/getPreferences'].preferences.currentNavItem,
       preferencesLoaded: false,
     };
   },
@@ -59,10 +58,16 @@ export default Vue.extend({
     window.removeEventListener('keydown', this.handleKeypress, true);
   },
   methods:  {
-    navChanged(tabName: string) {
+    async navChanged(tabName: string) {
       this.currentNavItem = tabName;
-      ipcRenderer.invoke('settings-write',
-        { preferences: { currentNavItem: this.currentNavItem } } );
+
+      await this.$store.dispatch(
+        'preferences/commitPreferences',
+        {
+          ...this.credentials as ServerState,
+          payload: { preferences: { currentNavItem: this.currentNavItem } } as RecursivePartial<Settings>,
+        },
+      );
     },
     closePreferences() {
       ipcRenderer.send('preferences-close');
