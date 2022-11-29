@@ -2,8 +2,6 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import Alert from '@pkg/components/Alert.vue';
-
 interface AlertType {
   icon: string;
   bannerText: string;
@@ -32,7 +30,6 @@ const alertMap: AlertMap = {
 
 export default Vue.extend({
   name:       'preferences-alert',
-  components: { Alert },
   computed:   {
     ...mapState('preferences', ['severities', 'preferencesError']),
     severity(): keyof AlertMap | undefined {
@@ -82,10 +79,34 @@ export default Vue.extend({
 </script>
 
 <template>
-  <alert
-    v-if="alert"
-    :icon="alert.icon"
-    :banner-text="bannerText"
-    :color="alert.color"
-  />
+  <div class="alert">
+    <span
+      v-if="alert"
+      class="alert-text"
+      :class="alert.color"
+    >
+      {{ bannerText }}
+    </span>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+  .alert {
+    .alert-text {
+      float: right;
+      margin-top: 10px;
+
+      &.info {
+        color: var(--primary);
+      }
+
+      &.warning {
+        color: var(--warning);
+      }
+
+      &.error {
+        color: var(--error);
+      }
+    }
+  }
+</style>
