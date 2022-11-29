@@ -63,10 +63,12 @@ export default Vue.extend({
 
     .icon {
       display: inline-block;
-      color: var(--primary);
+      background-color: var(--button-icon-bg);
+      color: var(--button-icon);
       font-size: 1.5rem;
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 50%;
       cursor: pointer;
     }
 
@@ -86,7 +88,6 @@ export default Vue.extend({
       border: 0;
       padding: 0.1rem;
       background: none;
-      color: var(--body-text);
       transition: background 200ms;
       border-radius: 50%;
     }
