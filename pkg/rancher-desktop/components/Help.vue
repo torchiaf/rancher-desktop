@@ -63,11 +63,11 @@ export default Vue.extend({
 
     .icon {
       display: inline-block;
-      background-color: var(--button-icon-bg);
-      color: var(--button-icon);
-      font-size: 1.5rem;
-      width: 1.4rem;
-      height: 1.4rem;
+      background-color: var(--primary);
+      color: var(--body-bg);
+      font-size: 1.3rem;
+      width: 1.3rem;
+      height: 1.2rem;
       border-radius: 50%;
       cursor: pointer;
     }
@@ -85,11 +85,14 @@ export default Vue.extend({
     .role-fab {
       all: revert;
       line-height: 0;
-      border: 0;
-      padding: 0.1rem;
+      border: 0.1rem solid var(--primary);
+      padding: 0;
       background: none;
       transition: background 200ms;
       border-radius: 50%;
+      &.disabled {
+        border: 0;
+      }
     }
 
     .ripple {
