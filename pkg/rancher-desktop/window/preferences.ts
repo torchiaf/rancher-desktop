@@ -1,4 +1,4 @@
-import { app, dialog } from 'electron';
+import { app, dialog,globalShortcut, shell } from 'electron';
 
 import { webRoot, createWindow } from '.';
 
@@ -42,6 +42,10 @@ export function openPreferences() {
       contextIsolation:   false,
     },
   });
+
+  // globalShortcut.register('Ctrl+?', () => {
+  //   shell.openExternal('https://docs.rancherdesktop.io/next/ui/preferences/application/#behavior');
+  // });
 
   window.webContents.on('ipc-message', (_event, channel) => {
     if (channel === 'preferences/load') {

@@ -1,4 +1,6 @@
 <script lang="ts">
+import os from 'os';
+
 import { shell } from 'electron';
 import Vue from 'vue';
 import { mapState } from 'vuex';
@@ -23,6 +25,9 @@ export default Vue.extend({
     tooltipContent(): string | null {
       return this.helpUrl ? this.tooltip : null;
     },
+    shortkey(): string[] {
+      return os.platform().startsWith('darwin') ? ['meta', 'f'] : ['f1'];
+    },
   },
   methods:  {
     openUrl() {
@@ -41,10 +46,12 @@ export default Vue.extend({
         content: tooltipContent,
         placement: 'right'
       }"
+      v-shortkey="shortkey"
       class="btn role-fab ripple"
       :class="{
         disabled: !helpUrl
       }"
+      @shortkey="openUrl"
       @click="openUrl"
     >
       <span
