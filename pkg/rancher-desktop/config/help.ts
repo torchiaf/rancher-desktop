@@ -1,22 +1,19 @@
-import { ipcRenderer } from 'electron';
+import os from 'os';
 
-const baseUrl = 'https://docs.rancherdesktop.io';
+import { ipcRenderer, shell } from 'electron';
 
-const paths: Record<string, string> = {
-  Application:                       'ui/preferences/application',
-  'Application-behavior':            'ui/preferences/application#behavior',
-  'Application-environment':         'ui/preferences/application#environment',
-  'Virtual Machine':                 'ui/preferences/virtual-machine',
-  'Container Engine-general':        'ui/preferences/container-engine#general',
-  'Container Engine-allowed-images': 'ui/preferences/container-engine#allowed-images',
-  WSL:                               'ui/preferences/wsl',
-  Kubernetes:                        'ui/preferences/kubernetes',
-};
+import { TransientSettings } from '@pkg/config/transientSettings';
 
-class HelpImpl {
+type Paths = Record<string, string>;
+
+class Url {
+  private readonly baseUrl = 'https://docs.rancherdesktop.io';
+  private paths: Paths = {};
   private version = 'next';
 
-  constructor() {
+  constructor(paths: Paths) {
+    this.paths = paths;
+
     ipcRenderer.on('get-app-version', (_event, version) => {
       const releasePattern = /^v?(\d+\.\d+)\.\d+$/;
 
@@ -26,13 +23,39 @@ class HelpImpl {
     ipcRenderer.send('get-app-version');
   }
 
-  url(key: string | undefined): string {
+  buildUrl(key: string | undefined): string {
     if (key) {
-      return `${ baseUrl }/${ this.version }/${ paths[key] }`;
+      return `${ this.baseUrl }/${ this.version }/${ this.paths[key] }`;
     }
 
     return '';
   }
+}
+
+class PreferencesHelp {
+  private readonly url = new Url({
+    Application:                       'ui/preferences/application',
+    'Application-behavior':            'ui/preferences/application#behavior',
+    'Application-environment':         'ui/preferences/application#environment',
+    'Virtual Machine':                 'ui/preferences/virtual-machine',
+    'Container Engine-general':        'ui/preferences/container-engine#general',
+    'Container Engine-allowed-images': 'ui/preferences/container-engine#allowed-images',
+    WSL:                               'ui/preferences/wsl',
+    Kubernetes:                        'ui/preferences/kubernetes',
+  });
+
+  openUrl(): void {
+    const { current, currentTabs } = TransientSettings.value.preferences.navItem;
+    const tab = currentTabs[current] ? `-${ currentTabs[current] }` : '';
+
+    const url = this.url.buildUrl(`${ current }${ tab }`);
+
+    shell.openExternal(url);
+  }
+}
+
+class HelpImpl {
+  readonly preferences = new PreferencesHelp();
 }
 
 export const Help = new HelpImpl();

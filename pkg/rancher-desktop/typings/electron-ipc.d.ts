@@ -64,6 +64,8 @@ interface IpcMainEvents {
 
   'dashboard-open': () => void;
   'dashboard-close': () => void;
+
+  'help/preferences/open-url': () => void;
 }
 
 /**
