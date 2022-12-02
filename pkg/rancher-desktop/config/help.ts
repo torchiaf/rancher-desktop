@@ -1,6 +1,6 @@
 import os from 'os';
 
-import { ipcRenderer, shell } from 'electron';
+import { shell } from 'electron';
 
 import { TransientSettings } from '@pkg/config/transientSettings';
 
@@ -9,23 +9,18 @@ type Paths = Record<string, string>;
 class Url {
   private readonly baseUrl = 'https://docs.rancherdesktop.io';
   private paths: Paths = {};
-  private version = 'next';
 
   constructor(paths: Paths) {
     this.paths = paths;
-
-    ipcRenderer.on('get-app-version', (_event, version) => {
-      const releasePattern = /^v?(\d+\.\d+)\.\d+$/;
-
-      this.version = releasePattern.exec(version)?.[1] ?? 'next';
-    });
-
-    ipcRenderer.send('get-app-version');
   }
 
-  buildUrl(key: string | undefined): string {
+  buildUrl(key: string | undefined, version: string): string {
     if (key) {
-      return `${ this.baseUrl }/${ this.version }/${ this.paths[key] }`;
+      const releasePattern = /^(\d+\.\d+)\.\d+$/;
+
+      const docsVersion = releasePattern.exec(version)?.[1] ?? 'next';
+
+      return `${ this.baseUrl }/${ docsVersion }/${ this.paths[key] }`;
     }
 
     return '';
@@ -44,11 +39,11 @@ class PreferencesHelp {
     Kubernetes:                        'ui/preferences/kubernetes',
   });
 
-  openUrl(): void {
+  openUrl(version: string): void {
     const { current, currentTabs } = TransientSettings.value.preferences.navItem;
     const tab = currentTabs[current] ? `-${ currentTabs[current] }` : '';
 
-    const url = this.url.buildUrl(`${ current }${ tab }`);
+    const url = this.url.buildUrl(`${ current }${ tab }`, version);
 
     shell.openExternal(url);
   }

@@ -31,7 +31,6 @@ import buildApplicationMenu from '@pkg/main/mainmenu';
 import setupNetworking from '@pkg/main/networking';
 import setupTray from '@pkg/main/tray';
 import setupUpdate from '@pkg/main/update';
-import * as childProcess from '@pkg/utils/childProcess';
 import getCommandLineArgs from '@pkg/utils/commandLine';
 import DockerDirManager from '@pkg/utils/dockerDirManager';
 import { arrayCustomizer } from '@pkg/utils/filters';
@@ -40,6 +39,7 @@ import paths from '@pkg/utils/paths';
 import { setupProtocolHandler, protocolRegistered } from '@pkg/utils/protocols';
 import { jsonStringifyWithWhiteSpace } from '@pkg/utils/stringify';
 import { RecursivePartial } from '@pkg/utils/typeUtils';
+import { getVersion } from '@pkg/utils/version';
 import * as window from '@pkg/window';
 import { closeDashboard, openDashboard } from '@pkg/window/dashboard';
 import { preferencesSetDirtyFlag } from '@pkg/window/preferences';
@@ -631,8 +631,8 @@ ipcMainProxy.on('get-app-version', async(event) => {
   event.reply('get-app-version', await getVersion());
 });
 
-ipcMainProxy.on('help/preferences/open-url', () => {
-  Help.preferences.openUrl();
+ipcMainProxy.on('help/preferences/open-url', async() => {
+  Help.preferences.openUrl(await getVersion());
 });
 
 ipcMainProxy.handle('show-message-box', (_event, options: Electron.MessageBoxOptions, modal = false): Promise<Electron.MessageBoxReturnValue> => {
@@ -679,36 +679,6 @@ Electron.ipcMain.handle('show-message-box-rd', async(_event, options: Electron.M
 
   return response;
 });
-
-function getProductionVersion() {
-  try {
-    return Electron.app.getVersion();
-  } catch (err) {
-    console.log(`Can't get app version: ${ err }`);
-
-    return '?';
-  }
-}
-
-async function getDevVersion() {
-  try {
-    const { stdout } = await childProcess.spawnFile('git', ['describe', '--tags'], { stdio: ['ignore', 'pipe', 'inherit'] });
-
-    return stdout.trim();
-  } catch (err) {
-    console.log(`Can't get app version: ${ err }`);
-
-    return '?';
-  }
-}
-
-async function getVersion() {
-  if (process.env.NODE_ENV === 'production' || process.env.MOCK_FOR_SCREENSHOTS) {
-    return getProductionVersion();
-  }
-
-  return await getDevVersion();
-}
 
 function showErrorDialog(title: string, message: string, fatal?: boolean) {
   Electron.dialog.showErrorBox(title, message);
