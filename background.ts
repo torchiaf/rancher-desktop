@@ -358,8 +358,6 @@ Electron.app.on('before-quit', async(event) => {
 });
 
 Electron.app.on('window-all-closed', () => {
-  // Unregister all shortcuts.
-  Electron.globalShortcut.unregisterAll();
   // On macOS, hide the dock icon.
   Electron.app.dock?.hide();
   // On windows and macOS platforms, we only quit via the notification tray / menu bar.
