@@ -55,6 +55,8 @@ class PreferencesHelp {
 }
 
 class HelpImpl {
+  readonly shortcut = os.platform() === 'darwin' ? 'Command+?' : 'F1';
+
   readonly preferences = new PreferencesHelp();
 }
 
