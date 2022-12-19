@@ -255,7 +255,7 @@ export function updateFromCommandLine(cfg: Settings, commandLineArgs: string[]):
         throw new Error(`Can't evaluate --${ fqFieldName }=${ finalValue } as ${ currentValueType }: ${ err }`);
       }
       // We know the current value's type is either boolean or number, so a constrained comparison is ok
-      // eslint-disable-next-line valid-typeof
+
       if (typeof finalValue !== currentValueType) {
         throw new TypeError(`Type of '${ finalValue }' is ${ typeof finalValue }, but current type of ${ fqFieldName } is ${ currentValueType } `);
       }

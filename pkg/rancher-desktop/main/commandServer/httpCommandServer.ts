@@ -545,7 +545,7 @@ export interface CommandWorkerInterface {
 // Extend CommandWorkerInterface to have extra types, as these types are used by
 // things that would need to use the interface.  ESLint doesn't like using
 // namespaces; but in this case we're extending an existing interface.
-// eslint-disable-next-line @typescript-eslint/no-namespace
+
 export namespace CommandWorkerInterface {
   export type CommandContext = commandContext;
 }
