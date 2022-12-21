@@ -104,6 +104,13 @@ class WindowShortcuts {
 class ShortcutsImpl {
   private windows: Record<number, WindowShortcuts> = {};
 
+  /**
+   *
+   * @param window where the shortcuts takes effect, if it focused
+   * @param _shortcuts definition of the shortcut, check Shortcut type
+   * @param callback
+   * @returns void
+   */
   register(window: BrowserWindow, _shortcuts: Shortcut | Shortcut[], callback: () => void) {
     const id = window?.id;
     const shortcuts = toArray(_shortcuts) as Shortcut[];
@@ -137,6 +144,12 @@ class ShortcutsImpl {
     });
   }
 
+  /**
+   *
+   * @param window where the shortcuts is registered
+   * @param _shortcuts shortcuts to be unregistered
+   * @returns void
+   */
   unregister(window: BrowserWindow, _shortcuts?: Shortcut | Shortcut[]) {
     const id = window?.id;
     const shortcuts: Shortcut[] = _shortcuts ? toArray(_shortcuts) : [];
