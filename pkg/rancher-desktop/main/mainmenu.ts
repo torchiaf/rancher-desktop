@@ -1,7 +1,6 @@
 import Electron, { Menu, MenuItem, MenuItemConstructorOptions, shell } from 'electron';
 
 import { getVersion, parseDocsVersion } from '@pkg/utils/version';
-import { openMain } from '@pkg/window';
 
 const baseUrl = `https://docs.rancherdesktop.io`;
 
@@ -179,13 +178,8 @@ function getWindowsApplicationMenu(): Array<MenuItem> {
 function getPreferencesMenuItem(): MenuItemConstructorOptions[] {
   return [
     {
-      label:               'Preferences',
-      visible:             true,
-      registerAccelerator: true,
-      accelerator:         'CmdOrCtrl+,',
-      click() {
-        openMain(true);
-      },
+      label:   'Preferences',
+      visible: true,
     },
     { type: 'separator' },
   ];
