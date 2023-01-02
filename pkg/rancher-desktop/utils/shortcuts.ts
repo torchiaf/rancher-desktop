@@ -170,6 +170,8 @@ class ShortcutsImpl {
     if (shortcuts.length === 0 || this.windows[id].shortcutsList.length === 0) {
       this.windows[id].removeListener();
       delete this.windows[id];
+
+      console.log(`Window: [${ id }] - all shortcuts removed`);
     }
   }
 
