@@ -6,6 +6,15 @@ import { toArray } from '@pkg/utils/array';
 
 type Platform = 'darwin' | 'linux' | 'win32';
 
+const Shortcut = {
+  /**
+   * TODO implement shift, alt
+   */
+  key: (shortcut: Shortcut) => {
+    return `${ shortcut.meta ? 'Cmd+' : '' }${ shortcut.control ? 'Ctrl+' : '' }${ shortcut.key }`;
+  },
+};
+
 export interface Shortcut {
   platform?: Platform | Platform[];
   meta?: boolean;
@@ -35,11 +44,8 @@ function currentPlatform(shortcuts: Shortcut[], action: (s: Shortcut) => void) {
   });
 }
 
-/**
- * TODO implement shift, alt
- */
-function getId(shortcut: Shortcut) {
-  return `${ shortcut.meta ? 'Cmd+' : '' }${ shortcut.control ? 'Ctrl+' : '' }${ shortcut.key }`;
+function log(lvl: 'info' | 'warn' | 'error', s: string) {
+  console[lvl](`shortcuts - ${ s }`);
 }
 
 class WindowShortcuts {
@@ -65,37 +71,37 @@ class WindowShortcuts {
   }
 
   findShortcut(shortcut: Shortcut) {
-    const id = getId(shortcut);
+    const key = Shortcut.key(shortcut);
 
-    return this.shortcuts[id];
+    return this.shortcuts[key];
   }
 
   addShortcut(shortcut: ShortcutExt) {
-    const id = getId(shortcut);
+    const key = Shortcut.key(shortcut);
 
-    if (this.shortcuts[id]) {
-      console.warn(`Shortcut [${ id }] is already registered for window: [${ this.window.id }]; Skip.`);
+    if (this.shortcuts[key]) {
+      log('warn', `window [${ this.window.id }] - key [${ key }] is already registered; skip.`);
 
       return;
     }
 
-    this.shortcuts[id] = shortcut;
+    this.shortcuts[key] = shortcut;
 
-    console.log(`Window: [${ this.window.id }] - add shortcut: [${ id }]`);
+    log('info', `add: window [${ this.window.id }] - key [${ key }]`);
   }
 
   removeShortcut(shortcut: Shortcut) {
-    const id = getId(shortcut);
+    const key = Shortcut.key(shortcut);
 
-    if (!this.shortcuts[id]) {
-      console.warn(`Shortcut [${ id }] is not registered for window: [${ this.window.id }]; Skip.`);
+    if (!this.shortcuts[key]) {
+      log('warn', `window [${ this.window.id }] - key [${ key }] is not registered; skip.`);
 
       return;
     }
 
-    delete this.shortcuts[id];
+    delete this.shortcuts[key];
 
-    console.log(`Window: [${ this.window.id }] - remove shortcut: [${ id }]`);
+    log('info', `remove: window [${ this.window.id }] - key [${ key }]`);
   }
 
   addListener() {
@@ -114,23 +120,28 @@ class ShortcutsImpl {
    *
    * @param window where the shortcuts takes effect, if it focused
    * @param _shortcuts definition of the shortcut, check Shortcut type
+   * @param description
    * @param callback
    * @returns void
    */
-  register(window: BrowserWindow, _shortcuts: Shortcut | Shortcut[], callback: () => void) {
+  register(window: BrowserWindow, _shortcuts: Shortcut | Shortcut[], callback: () => void, description?: string) {
     const id = window?.id;
     const shortcuts = toArray(_shortcuts) as Shortcut[];
 
     if (id === undefined) {
-      console.warn('Window is undefined; Skip.');
+      log('warn', 'window is undefined; skip.');
 
       return;
     }
 
     if (shortcuts.length === 0) {
-      console.warn('Shortcuts definition is empty; Skip.');
+      log('warn', 'key definition is empty; skip.');
 
       return;
+    }
+
+    if (description) {
+      log('info', `register: window [${ id }] - [${ description }]`);
     }
 
     if (!this.windows[id]) {
@@ -153,16 +164,21 @@ class ShortcutsImpl {
    *
    * @param window where the shortcuts is registered
    * @param _shortcuts shortcuts to be unregistered
-   * @returns void
+   * @param description
+   * @returns
    */
-  unregister(window: BrowserWindow, _shortcuts?: Shortcut | Shortcut[]) {
+  unregister(window: BrowserWindow, _shortcuts?: Shortcut | Shortcut[], description?: string) {
     const id = window?.id;
     const shortcuts: Shortcut[] = _shortcuts ? toArray(_shortcuts) : [];
 
     if (id === undefined) {
-      console.warn('Window is undefined; Skip.');
+      log('warn', 'window is undefined; skip.');
 
       return;
+    }
+
+    if (description) {
+      log('info', `unregister: window [${ id }] - [${ description }]`);
     }
 
     currentPlatform(shortcuts, (s) => {
@@ -173,7 +189,7 @@ class ShortcutsImpl {
       this.windows[id].removeListener();
       delete this.windows[id];
 
-      console.log(`Window: [${ id }] - all shortcuts removed`);
+      log('info', `window [${ id }] - all keys removed`);
     }
   }
 
@@ -181,7 +197,7 @@ class ShortcutsImpl {
     const id = window?.id;
 
     if (id === undefined) {
-      console.warn('Window is undefined; Skip.');
+      log('warn', 'window is undefined; skip.');
 
       return false;
     }

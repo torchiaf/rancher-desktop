@@ -113,17 +113,22 @@ export function openMain(showPreferencesModal = false) {
     });
 
   if (!Shortcuts.isRegistered(window)) {
-    Shortcuts.register(window, [{
-      key:      ',',
-      meta:     true,
-      platform: 'darwin',
-    }, {
-      key:      ',',
-      control:  true,
-      platform: ['linux', 'win32'],
-    }], () => {
-      openMain(true);
-    });
+    Shortcuts.register(
+      window,
+      [{
+        key:      ',',
+        meta:     true,
+        platform: 'darwin',
+      }, {
+        key:      ',',
+        control:  true,
+        platform: ['linux', 'win32'],
+      }],
+      () => {
+        openMain(true);
+      },
+      'open preferences',
+    );
   }
 
   app.dock?.show();
