@@ -19,13 +19,19 @@ interface ShortcutExt extends Shortcut {
   callback: () => void;
 }
 
-function platforms(shortcut: Shortcut): Platform[] {
-  return shortcut.platform ? toArray(shortcut.platform) : ['darwin', 'linux', 'win32'];
+function matchPlatform(shortcut: Shortcut): boolean {
+  if (shortcut.platform) {
+    return toArray(shortcut.platform).includes(os.platform());
+  }
+
+  return true;
 }
 
-function forEachPlatform(shortcuts: Shortcut[], action: (p: Platform, s: Shortcut) => void) {
-  shortcuts.forEach((shortcut) => {
-    platforms(shortcut).forEach(platform => action(platform, shortcut));
+function currentPlatform(shortcuts: Shortcut[], action: (s: Shortcut) => void) {
+  shortcuts.forEach((s) => {
+    if (matchPlatform(s)) {
+      action(s);
+    }
   });
 }
 
@@ -33,7 +39,7 @@ function forEachPlatform(shortcuts: Shortcut[], action: (p: Platform, s: Shortcu
  * TODO implement shift, alt
  */
 function getId(shortcut: Shortcut) {
-  return `${ shortcut.platform }+${ shortcut.meta ? 'Cmd+' : '' }${ shortcut.control ? 'Ctrl+' : '' }${ shortcut.key }`;
+  return `${ shortcut.meta ? 'Cmd+' : '' }${ shortcut.control ? 'Ctrl+' : '' }${ shortcut.key }`;
 }
 
 class WindowShortcuts {
@@ -46,7 +52,7 @@ class WindowShortcuts {
   }
 
   private inputCallback = (event: Electron.Event, input: Electron.Input) => {
-    const shortcut = this.findShortcut({ ...input, platform: os.platform() as Platform });
+    const shortcut = this.findShortcut(input);
 
     if (shortcut) {
       shortcut.callback();
@@ -135,10 +141,9 @@ class ShortcutsImpl {
       });
     }
 
-    forEachPlatform(shortcuts, (platform, shortcut) => {
+    currentPlatform(shortcuts, (s) => {
       this.windows[id].addShortcut({
-        ...shortcut,
-        platform,
+        ...s,
         callback,
       });
     });
@@ -160,11 +165,8 @@ class ShortcutsImpl {
       return;
     }
 
-    forEachPlatform(shortcuts, (platform, shortcut) => {
-      this.windows[id].removeShortcut({
-        ...shortcut,
-        platform,
-      });
+    currentPlatform(shortcuts, (s) => {
+      this.windows[id].removeShortcut(s);
     });
 
     if (shortcuts.length === 0 || this.windows[id].shortcutsList.length === 0) {
