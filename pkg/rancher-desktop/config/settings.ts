@@ -21,7 +21,7 @@ const console = Logging.settings;
 // it will be picked up from the default settings object.
 // Version incrementing is for when a breaking change is introduced in the settings object.
 
-const CURRENT_SETTINGS_VERSION = 4;
+const CURRENT_SETTINGS_VERSION = 5;
 
 export enum ContainerEngine {
   NONE = '',
@@ -87,6 +87,9 @@ export const defaultSettings = {
     showMuted:   false,
     mutedChecks: {} as Record<string, boolean>,
   },
+  startup:           false,
+  runningBackground: true,
+  keepRunning:       true,
 };
 
 export type Settings = typeof defaultSettings;

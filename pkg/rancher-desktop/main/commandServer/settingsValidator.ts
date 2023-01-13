@@ -91,6 +91,9 @@ export default class SettingsValidator {
         mutedChecks: this.checkBooleanMapping,
         showMuted:   this.checkBoolean,
       },
+      startup:           this.checkBoolean,
+      runningBackground: this.checkBoolean,
+      keepRunning:       this.checkBoolean,
     };
     this.canonicalizeSynonyms(newSettings);
     const errors: Array<string> = [];

@@ -54,6 +54,33 @@ export default Vue.extend({
 <template>
   <div class="application-behavior">
     <rd-fieldset
+      data-test="startup"
+      :legend-text="t('application.behavior.startup.legendText')"
+    >
+      <checkbox
+        :label="t('application.behavior.startup.label')"
+        :value="preferences.startup"
+        @input="onChange('startup', $event)"
+      />
+    </rd-fieldset>
+
+    <rd-fieldset
+      data-test="background"
+      :legend-text="t('application.behavior.background.legendText')"
+      class="background-fields"
+    >
+      <checkbox
+        :label="t('application.behavior.runningBackground.label')"
+        :value="preferences.runningBackground"
+        @input="onChange('runningBackground', $event)"
+      />
+      <checkbox
+        :label="t('application.behavior.keepRunning.label')"
+        :value="preferences.keepRunning"
+        @input="onChange('keepRunning', $event)"
+      />
+    </rd-fieldset>
+    <rd-fieldset
       v-if="!isPlatformWindows"
       data-test="administrativeAccess"
       legend-text="Administrative Access"
@@ -94,5 +121,10 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    .background-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
   }
 </style>

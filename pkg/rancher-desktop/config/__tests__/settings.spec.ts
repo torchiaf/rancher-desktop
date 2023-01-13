@@ -51,6 +51,9 @@ describe('updateFromCommandLine', () => {
         showMuted:   false,
         mutedChecks: { },
       },
+      startup:           false,
+      runningBackground: true,
+      keepRunning:       true,
     };
     origPrefs = clone(prefs);
   });
