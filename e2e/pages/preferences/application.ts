@@ -8,6 +8,9 @@ export class ApplicationNav {
   readonly automaticUpdates: Locator;
   readonly automaticUpdatesCheckbox: Locator;
   readonly statistics: Locator;
+  readonly autoStart: Locator;
+  readonly background: Locator;
+  readonly trayIcon: Locator;
   readonly pathManagement: Locator;
 
   constructor(page: Page) {
@@ -19,6 +22,9 @@ export class ApplicationNav {
     this.automaticUpdates = page.locator('[data-test="automaticUpdates"]');
     this.automaticUpdatesCheckbox = page.locator('[data-test="automaticUpdatesCheckbox"]');
     this.statistics = page.locator('[data-test="statistics"]');
+    this.autoStart = page.locator('[data-test="autoStart"]');
+    this.background = page.locator('[data-test="background"]');
+    this.trayIcon = page.locator('[data-test="trayIcon"]');
     this.pathManagement = page.locator('[data-test="pathManagement"]');
   }
 }

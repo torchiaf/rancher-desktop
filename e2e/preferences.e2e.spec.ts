@@ -72,6 +72,9 @@ test.describe.serial('Main App Test', () => {
 
     await expect(application.automaticUpdates).toBeVisible();
     await expect(application.statistics).toBeVisible();
+    await expect(application.autoStart).toBeVisible();
+    await expect(application.background).toBeVisible();
+    await expect(application.trayIcon).toBeVisible();
     await expect(application.pathManagement).not.toBeVisible();
   });
 

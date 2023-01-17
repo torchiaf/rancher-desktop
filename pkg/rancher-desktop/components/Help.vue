@@ -70,7 +70,7 @@ export default Vue.extend({
 
       &:before{
         padding-top: 5%;
-        padding-left: 2%;
+        padding-left: 3%;
         display: block;
       }
 

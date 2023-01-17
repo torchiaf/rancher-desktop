@@ -54,6 +54,43 @@ export default Vue.extend({
 <template>
   <div class="application-behavior">
     <rd-fieldset
+      data-test="autoStart"
+      :legend-text="t('application.behavior.autoStart.legendText')"
+    >
+      <checkbox
+        :label="t('application.behavior.autoStart.label')"
+        :value="preferences.autoStart"
+        @input="onChange('autoStart', $event)"
+      />
+    </rd-fieldset>
+
+    <rd-fieldset
+      data-test="background"
+      :legend-text="t('application.behavior.background.legendText')"
+      class="background-fields"
+    >
+      <checkbox
+        :label="t('application.behavior.startInBackground.label')"
+        :value="preferences.startInBackground"
+        @input="onChange('startInBackground', $event)"
+      />
+      <checkbox
+        :label="t('application.behavior.keepRunning.label')"
+        :value="preferences.keepRunning"
+        @input="onChange('keepRunning', $event)"
+      />
+    </rd-fieldset>
+    <rd-fieldset
+      data-test="trayIcon"
+      :legend-text="t('application.behavior.trayIcon.legendText')"
+    >
+      <checkbox
+        :label="t('application.behavior.trayIcon.label')"
+        :value="preferences.hideTrayIcon"
+        @input="onChange('hideTrayIcon', $event)"
+      />
+    </rd-fieldset>
+    <rd-fieldset
       v-if="!isPlatformWindows"
       data-test="administrativeAccess"
       legend-text="Administrative Access"
@@ -94,5 +131,11 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
+    .background-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
   }
 </style>

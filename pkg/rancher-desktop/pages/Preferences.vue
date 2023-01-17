@@ -180,7 +180,7 @@ export default Vue.extend({
   .preferences-body {
     grid-area: body;
     max-height: 100%;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .preferences-footer {

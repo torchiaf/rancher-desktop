@@ -260,6 +260,21 @@ about:
   downloadCLI:
     title: CLI Downloads
 
+application:
+  behavior:
+    autoStart:
+      legendText: Startup
+      label: Automatically start Rancher Desktop at login
+    background:
+      legendText: Background
+    startInBackground:
+      label: Start Rancher Desktop in the background
+    keepRunning:
+      label: Keep Rancher Desktop running in the background when closing application window
+    trayIcon:
+      legendText: Tray Icon
+      label: Hide Rancher Desktop tray icon
+
 containerEngine:
   label: Container Engine
   options:

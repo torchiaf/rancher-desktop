@@ -62,6 +62,9 @@ export default Vue.extend({
     flex-direction: column;
 
     .help {
+      position: fixed;
+      bottom: 65px;
+      right: 7px;
       margin: auto 0.75rem 0.75rem auto;
     }
   }
