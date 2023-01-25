@@ -1,4 +1,5 @@
 # Rancher Desktop
+test
 
 Rancher Desktop is an open-source project that brings Kubernetes and
 container management to the desktop. It runs on Windows, macOS and
@@ -44,7 +45,7 @@ with an existing Windows installation.
 
 4. Close the privileged PowerShell prompt.
 5. Ensure `msbuild_path` and `msvs_version` are configured correctly in `.npmrc` file. Run the following commands to set these properties:
-   
+
    ```
    npm config set msvs_version <visual-studio-version-number>
    npm config set msbuild_path <path/to/MSBuild.exe>
