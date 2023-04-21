@@ -4710,6 +4710,20 @@ resourceQuota:
   resourceType:
     label: Resource Type
 
+snapshots:
+  title: Snapshots
+  action:
+    create: Create Snapshot
+  table:
+    header:
+      snapshotName: Name
+      createdAt: Created At
+      updatedAt: Updated At
+      type: Type
+      status: Status
+  create:
+    title: 'Create Snapshot'
+
 ##############################
 ### Troubleshooting Page
 ##############################
