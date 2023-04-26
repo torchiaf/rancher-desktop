@@ -127,6 +127,7 @@ export default {
         @click.prevent="changeSort($event, col)"
       >
         <span v-if="col.sort" v-tooltip="col.tooltip">
+          <i v-if="col.icon" :class="{icon: true, [col.icon]: true}" />
           <span v-html="labelFor(col)" />
           <span class="icon-stack">
             <i class="icon icon-sort icon-stack-1x faded" />

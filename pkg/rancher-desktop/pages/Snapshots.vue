@@ -6,7 +6,7 @@ import Snapshots from '@pkg/components/Snapshots.vue';
 export default Vue.extend({
   components: { Snapshots },
   data() {
-    return {};
+    return { };
   },
 
   computed: {},
@@ -14,20 +14,22 @@ export default Vue.extend({
   watch: {},
 
   mounted() {
-    this.$store.dispatch(
-      'page/setHeader',
-      { title: this.t('snapshots.title') },
-    );
-
-    this.$store.dispatch(
-      'page/setAction',
-      { action: 'snapshots-button-create' },
-    );
   },
+
   beforeDestroy() {
   },
 
-  methods: {},
+  methods: {
+    onChange(snapshots: any[]) {
+      this.$store.dispatch(
+        'page/setHeader',
+        {
+          title:  `${ snapshots?.length } ${ this.t('snapshots.title') }`,
+          action: 'snapshots-button-create',
+        },
+      );
+    },
+  },
 });
 
 </script>
@@ -37,7 +39,8 @@ export default Vue.extend({
     <nuxt-child />
     <Snapshots
       class="content"
-      data-test="SnapshotsTable"
+      data-test="snapshots-table"
+      @change="onChange($event)"
     />
   </div>
 </template>
