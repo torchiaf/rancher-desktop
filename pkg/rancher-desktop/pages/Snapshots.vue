@@ -25,7 +25,7 @@ export default Vue.extend({
         'page/setHeader',
         {
           title:  `${ snapshots?.length } ${ this.t('snapshots.title') }`,
-          action: 'snapshots-button-create',
+          action: 'SnapshotsButtonCreate',
         },
       );
     },

@@ -2,19 +2,10 @@
 import Vue from 'vue';
 import { mapState } from 'vuex';
 
-import DiagnosticsButtonRun from '@pkg/components/DiagnosticsButtonRun.vue';
-import ImagesButtonAdd from '@pkg/components/ImagesButtonAdd.vue';
-import SnapshotsButtonCreate from '@pkg/components/SnapshotsButtonCreate.vue';
-
 const componentCache: { [key: string]: any } = {};
 
 export default Vue.extend({
-  name:       'the-title',
-  components: {
-    ImagesButtonAdd,
-    DiagnosticsButtonRun,
-    SnapshotsButtonCreate,
-  },
+  name: 'the-title',
   data() {
     return {
       isChild:          false,
