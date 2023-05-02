@@ -23,8 +23,6 @@ export default Vue.extend<Data, any, any, any>({
   data() {
     return {
       name:     defaultName(),
-      types:    ['scheduled', 'manual'],
-      type:     'manual',
       creating: false,
       goBack:   () => {},
     };
@@ -32,7 +30,7 @@ export default Vue.extend<Data, any, any, any>({
   computed: { },
 
   created() {
-    this.goBack = debounce(() => this.$router.back(), 300);
+    this.goBack = debounce(() => this.$router.back(), 1000);
   },
 
   mounted() {
@@ -44,11 +42,11 @@ export default Vue.extend<Data, any, any, any>({
     (this.$refs.nameInput as any)?.select();
   },
   methods: {
-    onChangeType(event: any) {
-      this.type = event.target.value;
-    },
     submit() {
-      console.log('submit', this.name, this.type );
+      console.log('submit', this.name );
+
+      document.getSelection()?.removeAllRanges();
+
       this.creating = true;
 
       this.goBack();
@@ -68,19 +66,6 @@ export default Vue.extend<Data, any, any, any>({
       :disabled="creating"
       :label="t('snapshots.create.name.label')"
     />
-
-    <div class="field type-field">
-      <label style="margin-bottom: 3px; display: block;">(Opt)</label>
-      <select
-        :value="type"
-        :disabled="creating"
-        @change="onChangeType($event)"
-      >
-        <option v-for="tp in types" :key="tp" :value="tp" :selected="tp === type">
-          {{ tp }}
-        </option>
-      </select>
-    </div>
 
     <button
       class="btn role-primary btn-lg"
