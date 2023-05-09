@@ -314,6 +314,10 @@ export default {
         return;
       }
 
+      if (node.disableContextMenu) {
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
 

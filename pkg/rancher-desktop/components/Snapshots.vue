@@ -30,16 +30,23 @@ export default Vue.extend<Data, any, any, any>({
         label: this.t('snapshots.table.header.createdAt'),
         sort:  ['createdAt', 'snapshotName', 'state'],
       },
+      {
+        name:   'restore',
+        label:  ' ',
+        search: false,
+        width:  50,
+        align:  'right',
+      },
+      {
+        name:   'delete',
+        label:  ' ',
+        search: false,
+        width:  50,
+        align:  'right',
+      },
     ];
 
     const availableActions = [
-      {
-        label:    this.t('snapshots.table.action.restore'),
-        action:   'restoreSnapshot',
-        enabled:  true,
-        icon:     'icon icon-refresh',
-        bulkable: false,
-      },
       {
         label:      this.t('snapshots.table.action.delete'),
         action:     'deleteSnapshot',
@@ -88,7 +95,8 @@ export default Vue.extend<Data, any, any, any>({
       return this.snapshots.map((snapshot: any) => {
         const res = {
           ...snapshot,
-          availableActions: this.availableActions,
+          availableActions:   this.availableActions,
+          disableContextMenu: true,
         };
 
         this._bindActionsCallbacksToRow(res);
@@ -165,39 +173,50 @@ export default Vue.extend<Data, any, any, any>({
   <div>
     <SortableTable
       ref="snapshotsTable"
-      class="snapshotsTable"
+      class="snapshots-table"
       data-test="snapshotsTable"
       key-field="id"
       default-sort-by="createdAt"
       :headers="headers"
       :rows="rows"
+      :row-actions="false"
       :table-actions="true"
       :class="{'disabled': isDisabled}"
       @selection="updateSelection"
-    />
+    >
+      <template #cell:restore="{row}">
+        <button
+          data-test="button-restore-snapshot"
+          type="button"
+          class="btn btn-sm role-secondary"
+          @click="restoreSnapshot(row)"
+        >
+          {{ t('snapshots.table.action.restore') }}
+        </button>
+      </template>
+      <template #cell:delete="{row}">
+        <button
+          data-test="button-delete-snapshot"
+          type="button"
+          class="btn btn-sm role-secondary"
+          @click="deleteSnapshot(row)"
+        >
+          {{ t('snapshots.table.action.delete') }}
+        </button>
+      </template>
+    </SortableTable>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.snapshotsTable {
+.snapshots-table {
   &.disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-}
 
-.saving-bar {
-  display: flex;
-  border-radius: 7.5px;
-  background-color: var(--border);
-  border: 1px solid var(--border);
-  height: 18px;
-  width: 75px;
-
-  .loading {
-    border-radius: 7.5px;
-    background-color: var(--success);
-    width: 35%;
+  .role-secondary.btn-sm {
+    line-height: 28px;
   }
 }
 </style>
