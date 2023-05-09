@@ -24,13 +24,11 @@ export default Vue.extend<Data, any, any, any>({
         name:  'snapshotName',
         label: this.t('snapshots.table.header.snapshotName'),
         sort:  ['snapshotName', 'createdAt', 'state'],
-        icon:  'icon-snapshot',
       },
       {
         name:  'createdAt',
         label: this.t('snapshots.table.header.createdAt'),
         sort:  ['createdAt', 'snapshotName', 'state'],
-        icon:  'icon-history',
       },
     ];
 
