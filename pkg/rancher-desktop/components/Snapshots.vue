@@ -31,6 +31,11 @@ export default Vue.extend<Data, any, any, any>({
         sort:  ['createdAt', 'snapshotName', 'state'],
       },
       {
+        name:  'size',
+        label: this.t('snapshots.table.header.size'),
+        sort:  ['createdAt', 'snapshotName', 'state'],
+      },
+      {
         name:   'restore',
         label:  ' ',
         search: false,
@@ -62,21 +67,25 @@ export default Vue.extend<Data, any, any, any>({
         id:           'id-snap-1',
         snapshotName: 'snap-1',
         createdAt:    '2023-03-22 01:00',
+        size:         12345,
       },
       {
         id:           'id-snap-2',
         snapshotName: 'snap-2',
         createdAt:    '2023-04-20 01:00',
+        size:         12345,
       },
       {
         id:           'id-snap-3',
         snapshotName: 'snap-3',
         createdAt:    '2023-02-28 01:00',
+        size:         12345,
       },
       {
         id:           'id-snap-4',
         snapshotName: 'snap-4',
         createdAt:    '2023-01-28 01:00',
+        size:         12345,
       },
     ];
 
@@ -184,21 +193,29 @@ export default Vue.extend<Data, any, any, any>({
       :class="{'disabled': isDisabled}"
       @selection="updateSelection"
     >
+      <template #cell:size="{row}">
+        <span>{{ `${row.size} Kb` }}</span>
+        <div class="snapshot-size-bar">
+          <div class="size"></div>
+        </div>
+      </template>
+
       <template #cell:restore="{row}">
         <button
           data-test="button-restore-snapshot"
           type="button"
-          class="btn btn-sm role-secondary"
+          class="btn btn-sm role-secondary restore-btn"
           @click="restoreSnapshot(row)"
         >
           {{ t('snapshots.table.action.restore') }}
         </button>
       </template>
+
       <template #cell:delete="{row}">
         <button
           data-test="button-delete-snapshot"
           type="button"
-          class="btn btn-sm role-secondary"
+          class="btn btn-sm role-secondary delete-btn"
           @click="deleteSnapshot(row)"
         >
           {{ t('snapshots.table.action.delete') }}
@@ -218,5 +235,26 @@ export default Vue.extend<Data, any, any, any>({
   .role-secondary.btn-sm {
     line-height: 28px;
   }
+
+  .delete-btn {
+    color: var(--error) !important;
+    border: solid 1px var(--error);
+  }
+
+  .snapshot-size-bar {
+    display: flex;
+    border-radius: 7.5px;
+    background-color: var(--border);
+    border: 1px solid var(--border);
+    height: 18px;
+    width: 75px;
+
+    .size {
+      border-radius: 7.5px;
+      background-color: var(--success);
+      width: 60%;
+    }
+  }
+
 }
 </style>

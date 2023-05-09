@@ -4718,9 +4718,7 @@ snapshots:
     header:
       snapshotName: Name
       createdAt: Created At
-      updatedAt: Updated At (Opt)
-      type: Type (Opt)
-      state: State (Opt)
+      size: Size
     action:
       restore: Restore
       delete: Delete
