@@ -4,6 +4,7 @@ import debounce from 'lodash/debounce';
 import Vue from 'vue';
 
 import SortableTable from '@pkg/components/SortableTable/index.vue';
+import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
 interface Data {
   headers: any[],
@@ -56,7 +57,6 @@ export default Vue.extend<Data, any, any, any>({
         label:      this.t('snapshots.table.action.delete'),
         action:     'deleteSnapshot',
         enabled:    true,
-        icon:       'icon icon-delete',
         bulkable:   true,
         bulkAction: 'deleteSnapshots',
       },
@@ -129,39 +129,49 @@ export default Vue.extend<Data, any, any, any>({
     updateSelection(v: any) {
       this.selected = v;
     },
-    restoreSnapshot(snapshot: any) {
+    async restoreSnapshot(snapshot: any) {
       console.log('restore', snapshot);
 
       this.isDisabled = true;
       this.restoring = snapshot;
 
+      const ok = await this.showWarningModal(snapshot);
+
       debounce(() => {
         this.isDisabled = false;
         this.restoring = {};
-      }, 1000)();
+      }, ok ? 1000 : 0)();
     },
-    deleteSnapshot(snapshot: any) {
+    async deleteSnapshot(snapshot: any) {
       console.log('delete', snapshot );
 
       this.isDisabled = true;
 
+      const ok = await this.showWarningModal(snapshot);
+
       debounce(() => {
-        this.snapshots = this.snapshots.filter((item: any) => item.id !== snapshot.id);
+        if (ok) {
+          this.snapshots = this.snapshots.filter((item: any) => item.id !== snapshot.id);
+        }
 
         this.isDisabled = false;
-      }, 500)();
+      }, ok ? 500 : 0)();
     },
 
-    deleteSnapshots() {
+    async deleteSnapshots() {
       console.log('delete bulk', this.selected);
 
       this.isDisabled = true;
 
+      const ok = await this.showWarningModal();
+
       debounce(() => {
-        this.snapshots = this.snapshots.filter((item: any) => !this.selected.map((s: any) => s.id).includes(item.id));
+        if (ok) {
+          this.snapshots = this.snapshots.filter((item: any) => !this.selected.map((s: any) => s.id).includes(item.id));
+        }
 
         this.isDisabled = false;
-      }, 500)();
+      }, ok ? 500 : 0)();
     },
 
     _bindActionsCallbacksToRow(snapshot: any) {
@@ -173,6 +183,25 @@ export default Vue.extend<Data, any, any, any>({
           snapshot[bulkAction] = this[bulkAction].bind(this, snapshot);
         }
       });
+    },
+
+    async showWarningModal(snapshot: any) {
+      const result = await ipcRenderer.invoke('show-message-box', {
+        title:    'Snapshot restore',
+        type:     'warning',
+        message:  `Do you want to restore ${ snapshot?.name || 'selected Snapshots' }?`,
+        cancelId: 1,
+        buttons:  [
+          'Apply and reset',
+          'Cancel',
+        ],
+      });
+
+      if (result.response === 1) {
+        return false;
+      }
+
+      return true;
     },
   },
 });
@@ -194,10 +223,7 @@ export default Vue.extend<Data, any, any, any>({
       @selection="updateSelection"
     >
       <template #cell:size="{row}">
-        <span>{{ `${row.size} Kb` }}</span>
-        <div class="snapshot-size-bar">
-          <div class="size"></div>
-        </div>
+        <span>{{ `${row.size} Mb` }}</span>
       </template>
 
       <template #cell:restore="{row}">
@@ -253,7 +279,12 @@ export default Vue.extend<Data, any, any, any>({
       border-radius: 7.5px;
       background-color: var(--success);
       width: 60%;
+      margin-left: -1px
     }
+  }
+
+  .modal .vm--modal {
+    background-color: var(--body-bg);
   }
 
 }
