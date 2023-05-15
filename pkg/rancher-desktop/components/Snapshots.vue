@@ -36,23 +36,16 @@ export default Vue.extend<Data, any, any, any>({
         label: this.t('snapshots.table.header.size'),
         sort:  ['createdAt', 'snapshotName', 'state'],
       },
-      {
-        name:   'restore',
-        label:  ' ',
-        search: false,
-        width:  50,
-        align:  'right',
-      },
-      {
-        name:   'delete',
-        label:  ' ',
-        search: false,
-        width:  50,
-        align:  'right',
-      },
     ];
 
     const availableActions = [
+      {
+        label:    this.t('snapshots.table.action.restore'),
+        action:   'restoreSnapshot',
+        enabled:  true,
+        icon:     'icon icon-refresh',
+        bulkable: false,
+      },
       {
         label:      this.t('snapshots.table.action.delete'),
         action:     'deleteSnapshot',
@@ -104,8 +97,7 @@ export default Vue.extend<Data, any, any, any>({
       return this.snapshots.map((snapshot: any) => {
         const res = {
           ...snapshot,
-          availableActions:   this.availableActions,
-          disableContextMenu: true,
+          availableActions: this.availableActions,
         };
 
         this._bindActionsCallbacksToRow(res);
@@ -218,35 +210,12 @@ export default Vue.extend<Data, any, any, any>({
       default-sort-by="createdAt"
       :headers="headers"
       :rows="rows"
-      :row-actions="false"
       :table-actions="true"
       :class="{'disabled': isDisabled}"
       @selection="updateSelection"
     >
       <template #cell:size="{row}">
         <span>{{ `${row.size} Mb` }}</span>
-      </template>
-
-      <template #cell:restore="{row}">
-        <button
-          data-test="button-restore-snapshot"
-          type="button"
-          class="btn btn-sm role-secondary restore-btn"
-          @click="restoreSnapshot(row)"
-        >
-          {{ t('snapshots.table.action.restore') }}
-        </button>
-      </template>
-
-      <template #cell:delete="{row}">
-        <button
-          data-test="button-delete-snapshot"
-          type="button"
-          class="btn btn-sm role-secondary delete-btn"
-          @click="deleteSnapshot(row)"
-        >
-          {{ t('snapshots.table.action.delete') }}
-        </button>
       </template>
     </SortableTable>
   </div>
@@ -287,6 +256,13 @@ export default Vue.extend<Data, any, any, any>({
   .modal .vm--modal {
     background-color: var(--body-bg);
   }
-
 }
+</style>
+
+<style lang="scss">
+  .role-multi-action {
+    border: solid 1px var(--primary) !important;
+    border-radius: var(--border-radius);
+    font-size: 15px !important;
+  }
 </style>
