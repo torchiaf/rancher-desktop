@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <script lang="ts">
-import debounce from 'lodash/debounce';
+import { debounce, startCase } from 'lodash';
 import Vue from 'vue';
 
 import SortableTable from '@pkg/components/SortableTable/index.vue';
@@ -135,7 +135,7 @@ export default Vue.extend<Data, any, any, any>({
       this.isDisabled = true;
       this.restoring = snapshot;
 
-      const ok = await this.showWarningModal(snapshot);
+      const ok = await this.showWarningModal('restore', snapshot);
 
       debounce(() => {
         this.isDisabled = false;
@@ -147,7 +147,7 @@ export default Vue.extend<Data, any, any, any>({
 
       this.isDisabled = true;
 
-      const ok = await this.showWarningModal(snapshot);
+      const ok = await this.showWarningModal('delete', snapshot);
 
       debounce(() => {
         if (ok) {
@@ -163,7 +163,7 @@ export default Vue.extend<Data, any, any, any>({
 
       this.isDisabled = true;
 
-      const ok = await this.showWarningModal();
+      const ok = await this.showWarningModal('delete');
 
       debounce(() => {
         if (ok) {
@@ -185,14 +185,15 @@ export default Vue.extend<Data, any, any, any>({
       });
     },
 
-    async showWarningModal(snapshot: any) {
+    // Todo translations
+    async showWarningModal(action: string, snapshot: any) {
       const result = await ipcRenderer.invoke('show-message-box', {
-        title:    'Snapshot restore',
+        title:    `Snapshot ${ action }`,
         type:     'warning',
-        message:  `Do you want to restore ${ snapshot?.name || 'selected Snapshots' }?`,
+        message:  `Do you want to ${ action } ${ snapshot?.name || 'selected Snapshots' }?`,
         cancelId: 1,
         buttons:  [
-          'Apply and reset',
+          `${ startCase(action) }`,
           'Cancel',
         ],
       });
