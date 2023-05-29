@@ -11,8 +11,7 @@ Screenshots are either produced in light & dark mode.
 
 ## Prerequisites
 
-### MacOS
-
+### MacOSdawdw
 `screencapture` is required. It is part of the OS, so doesn't need to be installed separately. See https://ss64.com/osx/screencapture.html
 
 `GetWindowID` is also required, and can be installed running `brew install smokris/getwindowid/getwindowid`.
