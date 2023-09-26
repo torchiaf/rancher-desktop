@@ -307,6 +307,92 @@ paths:
               schema:
                 type: string
 
+  /v1/snapshots:
+    get:
+      operationId: listSnapshots
+      summary:  List the snapshots
+      responses:
+        '200':
+          description: The snapshots list in JSON format
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref" : "#/components/schemas/snapshot"
+
+  /v1/snapshot:
+    post:
+      operationId: createSnapshot
+      summary: Creates a new snapshot
+      responses:
+        '200':
+          description: The snapshot was created
+        '400':
+          description: The proposed snapshot was not valid.
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      operationId: updateSnapshot
+      summary:  Updates a snapshot
+      requestBody:
+        description: The snapshot in JSON format
+        content:
+          application/json:
+            schema:
+              "$ref" : "#/components/schemas/snapshot"
+        required: true
+      responses:
+        '202':
+          description: The snapshot were accepted.
+          content:
+            application/json:
+              schema:
+                "$ref" : "#/components/schemas/snapshot"
+        '400':
+          description: The proposed snapshot were not valid.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+    delete:
+      operationId: deleteSnapshot
+      summary:  Deletes a snapshot
+      parameters:
+      - in: query
+        name: id
+      responses:
+        '200':
+          description: The snapshot was deleted.
+        '404':
+          description: The snapshot was not found.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /v1/snapshot/restore:
+    post:
+      operationId: restoreSnapshot
+      summary: Restore a snapshot
+      parameters:
+      - in: query
+        name: id
+      responses:
+        '202':
+          description: The snapshot was restored.
+        '404':
+          description: The snapshot was not found.
+        '422':
+          description: The snapshot could not be restored.
+          content:
+            text/plain:
+              schema:
+                type: string
+
   /v1/transient_settings:
     get:
       operationId: listTransientSettings

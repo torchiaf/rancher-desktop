@@ -30,6 +30,8 @@ import { getIpcMainProxy } from '@pkg/main/ipcMain';
 import mainEvents from '@pkg/main/mainEvents';
 import buildApplicationMenu from '@pkg/main/mainmenu';
 import setupNetworking from '@pkg/main/networking';
+import { Snapshots } from '@pkg/main/snapshots/snapshots';
+import { Snapshot } from '@pkg/main/snapshots/types';
 import { Tray } from '@pkg/main/tray';
 import setupUpdate from '@pkg/main/update';
 import { spawnFile } from '@pkg/utils/childProcess';
@@ -1227,6 +1229,22 @@ class BackgroundCommandWorker implements CommandWorkerInterface {
         window.send('extensions/changed');
       }
     }
+  }
+
+  async listSnapshots(context: CommandWorkerInterface.CommandContext): Promise<Snapshot[]> {
+    return await Snapshots.list();
+  }
+
+  async createSnapshot(context: CommandWorkerInterface.CommandContext, snapshot: Snapshot): Promise<void> {
+    return await Snapshots.create(snapshot);
+  }
+
+  async restoreSnapshot(context: CommandWorkerInterface.CommandContext, id: string): Promise<void> {
+    return await Snapshots.restore(id);
+  }
+
+  async deleteSnapshot(context: CommandWorkerInterface.CommandContext, id: string): Promise<void> {
+    return await Snapshots.delete(id);
   }
 }
 

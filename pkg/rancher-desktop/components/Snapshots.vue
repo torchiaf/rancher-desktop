@@ -1,10 +1,9 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <script lang="ts">
-import { debounce, startCase } from 'lodash';
-import Vue from 'vue';
-
 import SortableTable from '@pkg/components/SortableTable/index.vue';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
+import { debounce, startCase } from 'lodash';
+import Vue from 'vue';
 
 interface Data {
   headers: any[],
@@ -55,37 +54,10 @@ export default Vue.extend<Data, any, any, any>({
       },
     ];
 
-    const snapshots = [
-      {
-        id:           'id-snap-1',
-        snapshotName: 'snap-1',
-        createdAt:    '2023-03-22 01:00',
-        size:         12345,
-      },
-      {
-        id:           'id-snap-2',
-        snapshotName: 'snap-2',
-        createdAt:    '2023-04-20 01:00',
-        size:         12345,
-      },
-      {
-        id:           'id-snap-3',
-        snapshotName: 'snap-3',
-        createdAt:    '2023-02-28 01:00',
-        size:         12345,
-      },
-      {
-        id:           'id-snap-4',
-        snapshotName: 'snap-4',
-        createdAt:    '2023-01-28 01:00',
-        size:         12345,
-      },
-    ];
-
     return {
       headers,
       availableActions,
-      snapshots,
+      snapshots:  [],
       selected:   null,
       isDisabled: false,
       restoring:  {},
