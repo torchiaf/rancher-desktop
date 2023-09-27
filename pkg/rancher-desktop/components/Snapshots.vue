@@ -1,16 +1,15 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <script lang="ts">
-import { debounce, startCase } from 'lodash';
-import Vue from 'vue';
-
 import SortableTable from '@pkg/components/SortableTable/index.vue';
+import { Snapshot } from '@pkg/main/snapshots/types';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
+import { startCase } from 'lodash';
+import Vue from 'vue';
+import { mapGetters } from 'vuex';
 
 interface Data {
   headers: any[],
   availableActions: any[],
-  snapshots: any[],
-  selected: any,
   isDisabled: boolean,
   restoring: any,
 }
@@ -22,79 +21,55 @@ export default Vue.extend<Data, any, any, any>({
   data(): Data {
     const headers = [
       {
-        name:  'snapshotName',
-        label: this.t('snapshots.table.header.snapshotName'),
-        sort:  ['snapshotName', 'createdAt', 'state'],
+        name:  'id',
+        label: this.t('snapshots.table.header.id'),
+        sort:  ['name', 'created'],
       },
       {
-        name:  'createdAt',
-        label: this.t('snapshots.table.header.createdAt'),
-        sort:  ['createdAt', 'snapshotName', 'state'],
+        name:  'name',
+        label: this.t('snapshots.table.header.name'),
+        sort:  ['name', 'created'],
       },
       {
-        name:  'size',
-        label: this.t('snapshots.table.header.size'),
-        sort:  ['createdAt', 'snapshotName', 'state'],
+        name:  'created',
+        label: this.t('snapshots.table.header.created'),
+        sort:  ['name', 'created'],
+      },
+      {
+        name:  'notes',
+        label: this.t('snapshots.table.header.notes'),
+        sort:  ['name', 'created'],
       },
     ];
 
     const availableActions = [
       {
         label:    this.t('snapshots.table.action.restore'),
-        action:   'restoreSnapshot',
+        action:   'restore',
         enabled:  true,
         icon:     'icon icon-refresh',
         bulkable: false,
       },
       {
-        label:      this.t('snapshots.table.action.delete'),
-        action:     'deleteSnapshot',
-        enabled:    true,
-        bulkable:   true,
-        bulkAction: 'deleteSnapshots',
-      },
-    ];
-
-    const snapshots = [
-      {
-        id:           'id-snap-1',
-        snapshotName: 'snap-1',
-        createdAt:    '2023-03-22 01:00',
-        size:         12345,
-      },
-      {
-        id:           'id-snap-2',
-        snapshotName: 'snap-2',
-        createdAt:    '2023-04-20 01:00',
-        size:         12345,
-      },
-      {
-        id:           'id-snap-3',
-        snapshotName: 'snap-3',
-        createdAt:    '2023-02-28 01:00',
-        size:         12345,
-      },
-      {
-        id:           'id-snap-4',
-        snapshotName: 'snap-4',
-        createdAt:    '2023-01-28 01:00',
-        size:         12345,
+        label:    this.t('snapshots.table.action.delete'),
+        action:   'delete',
+        enabled:  true,
+        bulkable: false,
       },
     ];
 
     return {
       headers,
       availableActions,
-      snapshots,
-      selected:   null,
       isDisabled: false,
       restoring:  {},
     };
   },
 
   computed: {
+    ...mapGetters('snapshots', { snapshots: 'list' }),
     rows() {
-      return this.snapshots.map((snapshot: any) => {
+      return this.snapshots?.map((snapshot: Snapshot) => {
         const res = {
           ...snapshot,
           availableActions: this.availableActions,
@@ -103,82 +78,62 @@ export default Vue.extend<Data, any, any, any>({
         this._bindActionsCallbacksToRow(res);
 
         return res;
-      });
+      }) || [];
     },
   },
 
   watch: {
     snapshots: {
       handler(neu) {
-        console.log('emit', neu);
         this.$emit('change', neu);
       },
       immediate: true,
     },
   },
 
-  methods: {
-    updateSelection(v: any) {
-      this.selected = v;
-    },
-    async restoreSnapshot(snapshot: any) {
-      console.log('restore', snapshot);
+  beforeMount() {
+    ipcRenderer.on('snapshots/changed', () => {
+      this.$store.dispatch('snapshots/fetch');
+    });
+    this.$store.dispatch('snapshots/fetch');
+  },
 
+  methods: {
+    async restore(snapshot: Snapshot) {
       this.isDisabled = true;
       this.restoring = snapshot;
 
       const ok = await this.showWarningModal('restore', snapshot);
 
-      debounce(() => {
-        this.isDisabled = false;
-        this.restoring = {};
-      }, ok ? 1000 : 0)();
-    },
-    async deleteSnapshot(snapshot: any) {
-      console.log('delete', snapshot );
+      if (ok) {
+        await this.$store.dispatch('snapshots/restore', snapshot.id);
+      }
 
+      this.isDisabled = false;
+      this.restoring = {};
+    },
+    async delete(snapshot: Snapshot) {
       this.isDisabled = true;
 
       const ok = await this.showWarningModal('delete', snapshot);
 
-      debounce(() => {
-        if (ok) {
-          this.snapshots = this.snapshots.filter((item: any) => item.id !== snapshot.id);
-        }
+      if (ok) {
+        await this.$store.dispatch('snapshots/delete', snapshot.id);
+      }
 
-        this.isDisabled = false;
-      }, ok ? 500 : 0)();
-    },
-
-    async deleteSnapshots() {
-      console.log('delete bulk', this.selected);
-
-      this.isDisabled = true;
-
-      const ok = await this.showWarningModal('delete');
-
-      debounce(() => {
-        if (ok) {
-          this.snapshots = this.snapshots.filter((item: any) => !this.selected.map((s: any) => s.id).includes(item.id));
-        }
-
-        this.isDisabled = false;
-      }, ok ? 500 : 0)();
+      this.isDisabled = false;
     },
 
     _bindActionsCallbacksToRow(snapshot: any) {
-      (snapshot.availableActions as any[]).forEach(({ action, bulkable, bulkAction }) => {
+      (snapshot.availableActions as any[]).forEach(({ action }) => {
         if (!snapshot[action]) {
           snapshot[action] = this[action].bind(this, snapshot);
-        }
-        if (bulkable && bulkAction && !snapshot[bulkAction]) {
-          snapshot[bulkAction] = this[bulkAction].bind(this, snapshot);
         }
       });
     },
 
     // Todo translations
-    async showWarningModal(action: string, snapshot: any) {
+    async showWarningModal(action: string, snapshot: Snapshot) {
       const result = await ipcRenderer.invoke('show-message-box', {
         title:    `Snapshot ${ action }`,
         type:     'warning',
@@ -210,9 +165,8 @@ export default Vue.extend<Data, any, any, any>({
       default-sort-by="createdAt"
       :headers="headers"
       :rows="rows"
-      :table-actions="true"
+      :table-actions="false"
       :class="{'disabled': isDisabled}"
-      @selection="updateSelection"
     >
       <template #cell:size="{row}">
         <span>{{ `${row.size} Mb` }}</span>

@@ -4716,9 +4716,10 @@ snapshots:
     create: Create Snapshot
   table:
     header:
-      snapshotName: Name
-      createdAt: Created At
-      size: Size
+      id: Id
+      name: Name
+      created: Created At
+      notes: Description
     action:
       restore: Restore
       delete: Delete
