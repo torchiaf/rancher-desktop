@@ -4,6 +4,7 @@ import { RouteConfig } from 'vue-router';
 import Default from '@pkg/layouts/default.vue';
 import Images from '@pkg/pages/Images.vue';
 import PortForwarding from '@pkg/pages/PortForwarding.vue';
+import Snapshots from '@pkg/pages/Snapshots.vue';
 import Troubleshooting from '@pkg/pages/Troubleshooting.vue';
 
 const routes: RouteConfig[] = [
@@ -26,6 +27,11 @@ const routes: RouteConfig[] = [
     name:      'rancher-desktop-troubleshooting',
     path:      '/troubleshooting',
     component: Troubleshooting,
+  },
+  {
+    name:      'rancher-desktop-snapshots',
+    path:      '/snapshots',
+    component: Snapshots,
   },
 ];
 

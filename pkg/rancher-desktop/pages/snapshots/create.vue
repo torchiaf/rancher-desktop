@@ -1,0 +1,148 @@
+<script lang="ts">
+
+import { Banner, LabeledInput, TextAreaAutoGrow } from '@rancher/components';
+import debounce from 'lodash/debounce';
+import Vue from 'vue';
+
+const defaultName = () => {
+  const dateString = new Date()
+    .toISOString()
+    .slice(0, 19)
+    .replace('T', '_')
+    .replace(/-/g, '_')
+    .replace(/:/g, '_');
+
+  return `snap_${ dateString }`;
+};
+
+interface Data {
+  name: string,
+  notes: string,
+  creating: boolean,
+}
+
+export default Vue.extend<Data, any, any, any>({
+  components: { Banner, LabeledInput, TextAreaAutoGrow },
+
+  data() {
+    return {
+      name:     defaultName(),
+      notes:    '',
+      creating: false,
+    };
+  },
+
+  mounted() {
+    this.$store.dispatch(
+      'page/setHeader',
+      { title: this.t('snapshots.create.title') },
+    );
+    (this.$refs.nameInput as any)?.focus();
+    (this.$refs.nameInput as any)?.select();
+  },
+
+  computed: {
+    valid() {
+      return !!this.name;
+    }
+  },
+
+  methods: {
+    goBack() {
+      this.$router.back();
+    },
+    async submit() {
+      document.getSelection()?.removeAllRanges();
+      this.creating = true;
+
+      const { name, notes } = this;
+
+      await this.$store.dispatch('snapshots/create', { name, notes });
+
+      this.goBack();
+    },
+  },
+});
+</script>
+
+<template>
+  <div>
+    <Banner
+      class="banner mb-20"
+      color="info"
+    >
+      {{ t('snapshots.create.info') }}
+    </Banner>
+    <div class="snapshot-form">
+      <div class="field name-field">
+        <label>{{ t('snapshots.create.name.label') }}</label>
+        <LabeledInput
+          class="input"
+          ref="nameInput"
+          v-model="name"
+          v-focus
+          type="text"
+          :disabled="creating"
+        />
+      </div>
+      <div class="field notes-field">
+        <label>{{ t('snapshots.create.notes.label') }}</label>
+        <TextAreaAutoGrow
+          class="input"
+          ref="notesInput"
+          v-model="notes"
+          :disabled="creating"
+        />
+      </div>
+      <div class="actions">
+        <button
+          class="btn btn-xs role-primary create"
+          :disabled="creating || !valid"
+          @click="submit"
+        >
+          <span>{{ t('snapshots.create.actions.submit') }}</span>
+        </button>
+        <button
+          class="btn btn-xs role-secondary back"
+          :disabled="creating"
+          @click="goBack"
+        >
+          <span>{{ t('snapshots.create.actions.back') }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+  .snapshot-form {
+    max-width: 500px;
+    margin-top: 10px;
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .input {
+      margin-top: 5px;
+    }
+
+    .notes-field .input {
+      min-height: 200px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 15px;
+      flex-grow: 1;
+
+      .btn {
+        min-width: 150px;
+      }
+    }
+  }
+  .banner {
+    margin-top: 10px;
+  }
+</style>

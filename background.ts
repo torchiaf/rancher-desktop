@@ -1281,6 +1281,7 @@ class BackgroundCommandWorker implements CommandWorkerInterface {
 
   async createSnapshot(context: CommandWorkerInterface.CommandContext, snapshot: Snapshot) {
     return await Snapshots.create(snapshot);
+    // window.send('snapshots/changed');
   }
 
   async restoreSnapshot(context: CommandWorkerInterface.CommandContext, id: string) {
@@ -1289,6 +1290,7 @@ class BackgroundCommandWorker implements CommandWorkerInterface {
 
   async deleteSnapshot(context: CommandWorkerInterface.CommandContext, id: string) {
     return await Snapshots.delete(id);
+    // window.send('snapshots/changed');
   }
 }
 
