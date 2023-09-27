@@ -4710,6 +4710,30 @@ resourceQuota:
   resourceType:
     label: Resource Type
 
+snapshots:
+  title: snapshots
+  action:
+    create: Create Snapshot
+  table:
+    header:
+      snapshotName: Name
+      createdAt: Created At
+      size: Size
+    action:
+      restore: Restore
+      delete: Delete
+    columns:
+      state:
+        active: active
+        saving: saving
+        completed: completed
+  create:
+    title: 'Create Snapshot'
+    name:
+      label: Name
+      placeholder: placeholder
+    submit: Create
+
 ##############################
 ### Troubleshooting Page
 ##############################
