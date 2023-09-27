@@ -220,7 +220,7 @@ export class HttpCommandServer {
   protected handleCORS(request: express.Request, response: express.Response, next: express.NextFunction): void {
     response.set({
       'Access-Control-Allow-Headers': 'Authorization',
-      'Access-Control-Allow-Methods': 'GET, PUT',
+      'Access-Control-Allow-Methods': 'GET, PUT, DELETE',
       'Access-Control-Allow-Origin':  '*',
     });
 

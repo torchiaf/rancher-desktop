@@ -196,4 +196,8 @@ export interface IpcRendererEvents {
   // #region Host
   'host/isArm': (isArm: boolean) => void;
   // #endregion
+
+  // #region Snapshots
+  'snapshots/changed': () => void;
+  // #endregion
 }

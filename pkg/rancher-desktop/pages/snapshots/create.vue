@@ -42,12 +42,13 @@ export default Vue.extend<Data, any, any, any>({
     (this.$refs.nameInput as any)?.select();
   },
   methods: {
-    submit() {
-      console.log('submit', this.name );
-
+    async submit() {
       document.getSelection()?.removeAllRanges();
-
       this.creating = true;
+
+      const { name } = this;
+
+      await this.$store.dispatch('snapshots/create', { name });
 
       this.goBack();
     },
