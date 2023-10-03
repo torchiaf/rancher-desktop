@@ -7,6 +7,7 @@ import semver from 'semver';
 
 import type { ServiceEntry } from '@pkg/backend/k8s';
 import type { RecursivePartial, Direction } from '@pkg/utils/typeUtils';
+import { SnapshotEvent } from '@pkg/main/snapshots/types';
 /**
  * IpcMainEvents describes events the renderer can send to the main process,
  * i.e. ipcRenderer.send() -> ipcMain.on().
@@ -88,6 +89,10 @@ export interface IpcMainEvents {
   /** Show a notification */
   'extensions/ui/toast': (level: 'success' | 'warning' | 'error', message: string) => void;
   'ok:extensions/getContentArea': (payload: { x: number, y: number }) => void;
+  // #endregion
+
+  // #region Snapshots
+  'snapshot': (event: SnapshotEvent) => void;
   // #endregion
 }
 
@@ -198,6 +203,6 @@ export interface IpcRendererEvents {
   // #endregion
 
   // #region Snapshots
-  // 'snapshots/changed': () => void;
+  'snapshot': (event: SnapshotEvent) => void;
   // #endregion
 }

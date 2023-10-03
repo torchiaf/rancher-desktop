@@ -1,8 +1,10 @@
 <script lang="ts">
 
-import { Banner, LabeledInput, TextAreaAutoGrow } from '@rancher/components';
-import debounce from 'lodash/debounce';
 import Vue from 'vue';
+import { ipcRenderer } from '@pkg/utils/ipcRenderer';
+import { Banner, LabeledInput, TextAreaAutoGrow } from '@rancher/components';
+import { SnapshotEvent } from '@pkg/main/snapshots/types';
+import delay from 'lodash/delay';
 
 const defaultName = () => {
   const dateString = new Date()
@@ -48,8 +50,8 @@ export default Vue.extend<Data, any, any, any>({
   },
 
   methods: {
-    goBack() {
-      this.$router.back();
+    goBack(event?: SnapshotEvent) {
+      this.$router.push({name: 'Snapshots', params: { event } });
     },
     async submit() {
       document.getSelection()?.removeAllRanges();
@@ -59,7 +61,7 @@ export default Vue.extend<Data, any, any, any>({
 
       await this.$store.dispatch('snapshots/create', { name, notes });
 
-      this.goBack();
+      this.goBack({ type: 'create', result: 'success', name });
     },
   },
 });
@@ -105,7 +107,7 @@ export default Vue.extend<Data, any, any, any>({
         <button
           class="btn btn-xs role-secondary back"
           :disabled="creating"
-          @click="goBack"
+          @click="goBack(null)"
         >
           <span>{{ t('snapshots.create.actions.back') }}</span>
         </button>

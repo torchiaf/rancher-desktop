@@ -4738,6 +4738,15 @@ snapshots:
       submit: Create
       back: Back
     info: 'Please be aware that the system will be unavailable during creation of a new Snapshot'
+  info:
+    restore:
+      success: '{snapshot} was successfully restored'
+      cancel: 'You successfully cancelled the restoration of {snapshot}'
+    create:
+      success: '{snapshot} was successfully created and added to the list'
+      cancel: 'You successfully cancelled the creation of {snapshot}'
+    delete:
+      success: '{snapshot} was successfully deleted'
 
 ##############################
 ### Troubleshooting Page

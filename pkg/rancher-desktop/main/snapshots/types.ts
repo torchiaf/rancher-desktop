@@ -4,6 +4,12 @@ export type SpawnResult = {
   error?: any
 };
 
+export type SnapshotEvent = {
+  type: 'restore' | 'delete' | 'create',
+  result: 'success' | 'cancel',
+  name: string
+}
+
 export interface Snapshot {
   id: string,
   name: string,

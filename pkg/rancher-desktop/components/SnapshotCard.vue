@@ -24,6 +24,7 @@ export default Vue.extend<Data, any, any, any>({
 
       if (ok) {
         await this.$store.dispatch('snapshots/restore', this.value.id);
+        ipcRenderer.send('snapshot', { type: 'restore', result: 'success', name: this.value.name });
       }
     },
 
@@ -32,6 +33,7 @@ export default Vue.extend<Data, any, any, any>({
 
       if (ok) {
         await this.$store.dispatch('snapshots/delete', this.value.id);
+        ipcRenderer.send('snapshot', { type: 'delete', result: 'success', name: this.value.name });
       }
     },
 
