@@ -8,6 +8,14 @@ export type SnapshotEvent = {
   type: 'restore' | 'delete' | 'create',
   result: 'success' | 'cancel',
   name: string
+};
+
+export interface SnapshotDialog {
+  name?: string,
+  header: string,
+  infoBanner?: string,
+  showProgressBar?: boolean,
+  showLogo?: boolean,
 }
 
 export interface Snapshot {

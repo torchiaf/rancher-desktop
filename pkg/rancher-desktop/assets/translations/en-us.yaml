@@ -4738,6 +4738,17 @@ snapshots:
       submit: Create
       back: Back
     info: 'Please be aware that the system will be unavailable during creation of a new Snapshot'
+  dialog:
+    restore:
+      header: Are you sure you want to restore this Snapshot?
+      actions:
+        ok: 'Yes, restore'
+        cancel: 'Back'
+    delete:
+      header: Are you sure you want to delete this Snapshot?
+      actions:
+        ok: 'Yes, delete'
+        cancel: 'Back'
   info:
     restore:
       success: '{snapshot} was successfully restored'
@@ -4747,6 +4758,7 @@ snapshots:
       cancel: 'You successfully cancelled the creation of {snapshot}'
     delete:
       success: '{snapshot} was successfully deleted'
+
 
 ##############################
 ### Troubleshooting Page

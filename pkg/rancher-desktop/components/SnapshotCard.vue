@@ -1,16 +1,13 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import type { PropType } from 'vue';
 import { Snapshot } from '@pkg/main/snapshots/types';
-import { startCase } from 'lodash';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
-interface Data {
-}
+import type { PropType } from 'vue';
 
-export default Vue.extend<Data, any, any, any>({
-  name: 'snapshot-card',
+export default Vue.extend<any, any, any, any>({
+  name:  'snapshot-card',
   props: {
     value: {
       type:     Object as PropType<Snapshot>,
@@ -20,42 +17,53 @@ export default Vue.extend<Data, any, any, any>({
 
   methods: {
     async restore() {
-      const ok = await this.showWarningModal('restore');
+      const ok = await this.showConfirmationDialog('restore');
 
       if (ok) {
         await this.$store.dispatch('snapshots/restore', this.value.id);
-        ipcRenderer.send('snapshot', { type: 'restore', result: 'success', name: this.value.name });
+        ipcRenderer.send('snapshot', {
+          type:   'restore',
+          result: 'success',
+          name:   this.value.name,
+        });
       }
     },
 
     async remove() {
-      const ok = await this.showWarningModal('delete');
+      const ok = await this.showConfirmationDialog('delete');
 
       if (ok) {
         await this.$store.dispatch('snapshots/delete', this.value.id);
-        ipcRenderer.send('snapshot', { type: 'delete', result: 'success', name: this.value.name });
+        ipcRenderer.send('snapshot', {
+          type:   'delete',
+          result: 'success',
+          name:   this.value.name,
+        });
       }
     },
 
-    // Todo remove
-    async showWarningModal(action: string) {
-      const result = await ipcRenderer.invoke('show-message-box', {
-        title:    `Snapshot ${ action }`,
-        type:     'warning',
-        message:  `Do you want to ${ action } ${ this.value?.name || 'selected Snapshots' }?`,
-        cancelId: 1,
-        buttons:  [
-          `${ startCase(action) }`,
-          'Cancel',
-        ],
-      });
+    async showConfirmationDialog(type: 'restore' | 'delete') {
+      const confirm = await ipcRenderer.invoke(
+        'show-snapshots-dialog',
+        {
+          window: {
+            message: '',
+            detail:  '',
+            type:    'question',
+            buttons: [
+              this.t(`snapshots.dialog.${ type }.actions.cancel`),
+              this.t(`snapshots.dialog.${ type }.actions.ok`),
+            ],
+            cancelId: 1,
+          },
+          format: {
+            header: this.t(`snapshots.dialog.${ type }.header`),
+            name: this.value.name },
+        },
+      );
 
-      if (result.response === 1) {
-        return false;
-      }
-
-      return true;
-    }
+      return confirm.response;
+    },
   },
 });
 
