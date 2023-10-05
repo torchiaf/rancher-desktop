@@ -1,10 +1,9 @@
 <script lang="ts">
 
-import Vue from 'vue';
-import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 import { Banner, LabeledInput, TextAreaAutoGrow } from '@rancher/components';
+import Vue from 'vue';
+
 import { SnapshotEvent } from '@pkg/main/snapshots/types';
-import delay from 'lodash/delay';
 
 const defaultName = () => {
   const dateString = new Date()
@@ -34,6 +33,12 @@ export default Vue.extend<Data, any, any, any>({
     };
   },
 
+  computed: {
+    valid() {
+      return !!this.name;
+    },
+  },
+
   mounted() {
     this.$store.dispatch(
       'page/setHeader',
@@ -43,15 +48,12 @@ export default Vue.extend<Data, any, any, any>({
     (this.$refs.nameInput as any)?.select();
   },
 
-  computed: {
-    valid() {
-      return !!this.name;
-    }
-  },
-
   methods: {
     goBack(event?: SnapshotEvent) {
-      this.$router.push({name: 'Snapshots', params: { event } });
+      this.$router.push({
+        name:   'Snapshots',
+        params: { event },
+      });
     },
     async submit() {
       document.getSelection()?.removeAllRanges();
@@ -61,7 +63,11 @@ export default Vue.extend<Data, any, any, any>({
 
       await this.$store.dispatch('snapshots/create', { name, notes });
 
-      this.goBack({ type: 'create', result: 'success', name });
+      this.goBack({
+        type:   'create',
+        result: 'success',
+        name,
+      });
     },
   },
 });
@@ -79,10 +85,10 @@ export default Vue.extend<Data, any, any, any>({
       <div class="field name-field">
         <label>{{ t('snapshots.create.name.label') }}</label>
         <LabeledInput
-          class="input"
           ref="nameInput"
           v-model="name"
           v-focus
+          class="input"
           type="text"
           :disabled="creating"
         />
@@ -90,9 +96,9 @@ export default Vue.extend<Data, any, any, any>({
       <div class="field notes-field">
         <label>{{ t('snapshots.create.notes.label') }}</label>
         <TextAreaAutoGrow
-          class="input"
           ref="notesInput"
           v-model="notes"
+          class="input"
           :disabled="creating"
         />
       </div>
